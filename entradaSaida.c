@@ -3,7 +3,9 @@
 #include <getopt.h>
 #include <unistd.h>
 #include <string.h>
+#include <stdbool.h>
 #include "logica.h"
+#include "entradaSaida.h"
 
 void substituiQuebraDeLinha(char* string){
     int n = strlen(string);
@@ -14,7 +16,7 @@ void substituiQuebraDeLinha(char* string){
         }
 }
 
-void obterNomeArquivos(int argc, char* argv[], char** arquivoEntrada, char** arquivoSaida, int* n){
+void obterNomeArquivos(int argc, char* argv[], char** arquivoEntrada, char** arquivoSaida, int* N){
     int opt;
     while((opt = getopt(argc, argv, "e:s:n:")) != -1){
         switch (opt)
@@ -28,7 +30,7 @@ void obterNomeArquivos(int argc, char* argv[], char** arquivoEntrada, char** arq
             break;
 
         case 'n':
-            *n = atoi(optarg);
+            *N = atoi(optarg);
             break;
 
         default:
@@ -41,12 +43,12 @@ void obterNomeArquivos(int argc, char* argv[], char** arquivoEntrada, char** arq
 void validaValor(Sudoku* s, int i, int j, int valor, int boolean){
     s->colunas[j].validos[valor-1] = boolean;
     s->linhas[i].validos[valor-1] = boolean;
-    s->grids[i][j].validos[valor-1] = boolean;
+    s->grids[i/3][j/3].validos[valor-1] = boolean;
 }
 
 void preencheValidos(Sudoku* s){
     for(int i = 0; i < 3; i++){
-        for(int j = 0; j < 3; i++){
+        for(int j = 0; j < 3; j++){
             for(int k = 0; k < 9; k++){
                 s->colunas[3*i+j].validos[k] = 1;
                 s->linhas[3*i+j].validos[k] = 1;
@@ -94,17 +96,73 @@ Sudoku* geraSudoku(char* arquivoEntrada){
     return sudoku;
 }
 
+int testaValores(Sudoku* s, int i, int j){
+    if(s->matrizSudoku[i][j] != 0)
+        return -1;
+    bool limite;
+    for(int k = 1; k <= 9; k++){
+        if(s->colunas[j].validos[k-1] == 0)
+            continue;
+        if(s->linhas[i].validos[k-1] == 0)
+            continue;
+        if(s->grids[i/3][j/3].validos[k-1] == 0)
+            continue;
+        
+        s->matrizSudoku[i][j] = k;
+        validaValor(s, i, j, k, 0);
+        limite = (j+1 >= 9);
+        if(backtracking(s, (limite ? i+1 : i), (limite ? 0 : j+1) ) == true)
+            return 1;
+        else{
+            s->matrizSudoku[i][j] = 0;
+            validaValor(s, i, j, k, 1);
+        }
+    }
+    return 0;
+}
+
+bool backtracking(Sudoku* sudoku, int n, int m){
+    if(sudoku == NULL)
+        return false;
+    int retorno;
+    for(int i = n; i < 9; i++){
+        for(int j = (i==n ? m : 0); j < 9; j++){
+            retorno = testaValores(sudoku, i, j);
+            if(retorno == -1)
+                continue;
+            if(retorno == 0)
+                return false;
+            if(retorno == 1)
+                return true;
+        }
+    }
+    return true;
+}
+
+bool resolveSudoku(Sudoku* sudoku){
+    return backtracking(sudoku, 0, 0);
+}
+
 int main(int argc, char* argv[]){
     char* entrada = NULL;
     char* saida = NULL;
-    int n = 1;
-    obterNomeArquivos(argc, argv, &entrada, &saida, &n);
+    int N = 1;
+    obterNomeArquivos(argc, argv, &entrada, &saida, &N);
     Sudoku* s = geraSudoku(entrada);
     for(int i = 0; i < 9; i++){
         for(int j = 0; j < 9; j++)
             printf("%d ", s->matrizSudoku[i][j]);
         printf("\n");
     }
+    int resultado = resolveSudoku(s);
+    printf("\n\n%d\n\n", resultado);
+    if(resultado)
+        for(int i = 0; i < 9; i++){
+            for(int j = 0; j < 9; j++)
+                printf("%d ", s->matrizSudoku[i][j]);
+            printf("\n");
+        }
+
     for(int i = 0; i < 9; i++)
         free(s->matrizSudoku[i]);
     free(s->matrizSudoku);
