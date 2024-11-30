@@ -71,11 +71,13 @@ Sudoku* geraSudoku(char* arquivoEntrada){
         sudoku->matrizSudoku[i] = (int*)calloc(9, sizeof(int));
     preencheValidos(sudoku);
     
-    char string[20];
+    char string[25];
     int i = 0;
     while(!feof(fp)){
-        fgets(string, 20, fp);
+        fgets(string, 25, fp);
         substituiQuebraDeLinha(string);
+        if(string[0] == '\n' || string[0] == '\r')
+            continue;
         char* token = strtok(string, " ");
         // printf("%s\n", token);
         for(int j = 0; j < 9; j++){
@@ -158,8 +160,13 @@ int main(int argc, char* argv[]){
     printf("\n\n%d\n\n", resultado);
     if(resultado)
         for(int i = 0; i < 9; i++){
-            for(int j = 0; j < 9; j++)
+            for(int j = 0; j < 9; j++){
                 printf("%d ", s->matrizSudoku[i][j]);
+                if((j+1) % 3 == 0)
+                    printf(" ");
+            }
+            if((i+1) % 3 == 0)
+                printf("\n");
             printf("\n");
         }
 

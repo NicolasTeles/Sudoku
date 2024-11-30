@@ -1,9 +1,11 @@
-v v v v v v 6 8 v
-v v v v 7 3 v v 9
-3 v 9 v v v v 4 5
-4 9 v v v v v v v
-8 v 3 v 5 v 9 v 2
-v v v v v v v 3 6
-9 6 v v v v 3 v 8
-7 v v 6 8 v v v v
-v 2 8 v v v v v v
+v v v  v v v  6 8 v
+v v v  v 7 3  v v 9
+3 v 9  v v v  v 4 5
+
+4 9 v  v v v  v v v
+8 v 3  v 5 v  9 v 2
+v v v  v v v  v 3 6
+
+9 6 v  v v v  3 v 8
+7 v v  6 8 v  v v v
+v 2 8  v v v  v v v
