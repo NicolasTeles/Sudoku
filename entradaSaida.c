@@ -3,6 +3,7 @@
 #include <getopt.h>
 #include <unistd.h>
 #include <string.h>
+#include "logica.h"
 
 void substituiQuebraDeLinha(char* string){
     int n = strlen(string);
@@ -37,16 +38,37 @@ void obterNomeArquivos(int argc, char* argv[], char** arquivoEntrada, char** arq
     }
 }
 
-int** geraMatriz(char* arquivoEntrada){
+void validaValor(Sudoku* s, int i, int j, int valor, int boolean){
+    s->colunas[j].validos[valor-1] = boolean;
+    s->linhas[i].validos[valor-1] = boolean;
+    s->grids[i][j].validos[valor-1] = boolean;
+}
+
+void preencheValidos(Sudoku* s){
+    for(int i = 0; i < 3; i++){
+        for(int j = 0; j < 3; i++){
+            for(int k = 0; k < 9; k++){
+                s->colunas[3*i+j].validos[k] = 1;
+                s->linhas[3*i+j].validos[k] = 1;
+                s->grids[i][j].validos[k] = 1;
+            }
+        }
+    }
+}
+
+Sudoku* geraSudoku(char* arquivoEntrada){
+    int valor;
     FILE* fp = fopen(arquivoEntrada, "r");
     if(fp == NULL){
         printf("Erro na abertura do arquivo\n");
         exit(1);
     }
-    int** matriz = (int**)calloc(9, sizeof(int*));
+    Sudoku* sudoku = (Sudoku*)malloc(sizeof(Sudoku));
+    sudoku->matrizSudoku = (int**)calloc(9, sizeof(int*));
     for(int i = 0; i < 9; i++)
-        matriz[i] = (int*)calloc(9, sizeof(int));
-
+        sudoku->matrizSudoku[i] = (int*)calloc(9, sizeof(int));
+    preencheValidos(sudoku);
+    
     char string[20];
     int i = 0;
     while(!feof(fp)){
@@ -56,18 +78,20 @@ int** geraMatriz(char* arquivoEntrada){
         // printf("%s\n", token);
         for(int j = 0; j < 9; j++){
             if(token[0] == 'v'){
-                matriz[i][j] = 0;
+                sudoku->matrizSudoku[i][j] = 0;
                 token = strtok(NULL, " ");
                 continue;
             }
-            matriz[i][j] = atoi(token);
+            sudoku->matrizSudoku[i][j] = valor = atoi(token);
+            validaValor(sudoku, i, j, valor, 0);
+            
             token = strtok(NULL, " ");
             // printf("%d %d %d\n", i, j, matriz[i][j]);
         }
         i++;
     }
     fclose(fp);
-    return matriz;
+    return sudoku;
 }
 
 int main(int argc, char* argv[]){
@@ -75,14 +99,15 @@ int main(int argc, char* argv[]){
     char* saida = NULL;
     int n = 1;
     obterNomeArquivos(argc, argv, &entrada, &saida, &n);
-    int** sudoku = geraMatriz(entrada);
+    Sudoku* s = geraSudoku(entrada);
     for(int i = 0; i < 9; i++){
         for(int j = 0; j < 9; j++)
-            printf("%d ", sudoku[i][j]);
+            printf("%d ", s->matrizSudoku[i][j]);
         printf("\n");
     }
     for(int i = 0; i < 9; i++)
-        free(sudoku[i]);
-    free(sudoku);
+        free(s->matrizSudoku[i]);
+    free(s->matrizSudoku);
+    free(s);
     return 0;
 }

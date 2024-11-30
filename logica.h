@@ -1,3 +1,6 @@
+#ifndef LOGICA_H
+#define LOGICA_H
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -9,12 +12,15 @@ typedef struct coluna{
     int validos[9];
 }Coluna;
 
-typedef struct quadrado{
+typedef struct grid{
     int validos[9];
-}Quadrado;
+}Grid;
 
 typedef struct sudoku{
     Linha linhas[9];
     Coluna colunas[9];
-    Quadrado quadrados[3][3];
+    Grid grids[3][3];
+    int** matrizSudoku;
 }Sudoku;
+
+#endif
