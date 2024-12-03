@@ -19,23 +19,22 @@ void substituiQuebraDeLinha(char* string){
 void obterNomeArquivos(int argc, char* argv[], char** arquivoEntrada, char** arquivoSaida, int* N){
     int opt;
     while((opt = getopt(argc, argv, "e:s:n:")) != -1){
-        switch (opt)
-        {
-        case 'e':
-            *arquivoEntrada = optarg;
-            break;
-        
-        case 's':
-            *arquivoSaida = optarg;
-            break;
+        switch (opt){
+            case 'e':
+                *arquivoEntrada = optarg;
+                break;
+            
+            case 's':
+                *arquivoSaida = optarg;
+                break;
 
-        case 'n':
-            *N = atoi(optarg);
-            break;
+            case 'n':
+                *N = atoi(optarg);
+                break;
 
-        default:
-            printf("Uso correto: %s -e <arquivo de entrada> -s <arquivo de saida>\n", argv[0]);
-            exit(1);
+            default:
+                printf("Uso correto: %s -e <arquivo de entrada> -s <arquivo de saida>\n", argv[0]);
+                exit(1);
         }
     }
 }

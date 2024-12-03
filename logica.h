@@ -17,6 +17,7 @@ typedef struct grid{
 }Grid;
 
 typedef struct sudoku{
+    int tamanho;
     Linha linhas[9];
     Coluna colunas[9];
     Grid grids[3][3];
