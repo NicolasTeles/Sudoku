@@ -5,22 +5,23 @@
 #include <stdlib.h>
 
 typedef struct linha{
-    int validos[9];
+    int *validos;
 }Linha;
 
 typedef struct coluna{
-    int validos[9];
+    int *validos;
 }Coluna;
 
 typedef struct grid{
-    int validos[9];
+    int *validos;
 }Grid;
 
 typedef struct sudoku{
     int tamanho;
-    Linha linhas[9];
-    Coluna colunas[9];
-    Grid grids[3][3];
+    int raizTamanho;
+    Linha *linhas;
+    Coluna *colunas;
+    Grid **grids;
     int** matrizSudoku;
 }Sudoku;
 
