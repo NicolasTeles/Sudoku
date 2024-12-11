@@ -3,6 +3,14 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <getopt.h>
+#include <unistd.h>
+#include <string.h>
+#include <stdbool.h>
+#include <math.h>
+#include "logica.h"
+#include "entradaSaida.h"
+#include "minHeap.h"
 
 typedef struct linha{
     int *validos;
