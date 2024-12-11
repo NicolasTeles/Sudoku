@@ -24,7 +24,7 @@ void criaVetoresValidos(Sudoku* s);
 
 void preencheValidos(Sudoku* s);
 
-Sudoku* geraSudoku(char* arquivoEntrada);
+Sudoku* geraSudoku(FILE* fp);
 
 int testaValores(Sudoku* s, int i, int j);
 
@@ -37,5 +37,7 @@ void destroiValidos(Sudoku* s);
 void destroiSudoku(Sudoku* s);
 
 void destroiMatriz(Sudoku* s);
+
+void printaResultado(Sudoku *s, FILE* fs);
 
 #endif

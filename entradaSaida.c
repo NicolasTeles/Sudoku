@@ -107,35 +107,40 @@ bool obterTamanhoSudoku(Sudoku* s, FILE* f){
     return true;
 }
 
-Sudoku* geraSudoku(char* arquivoEntrada){
+Sudoku* geraSudoku(FILE* fp){
     int valor;
-    FILE* fp = fopen(arquivoEntrada, "r");
-    if(fp == NULL){
-        printf("Erro na abertura do arquivo\n");
-        exit(1);
-    }
     Sudoku* sudoku = (Sudoku*)malloc(sizeof(Sudoku));
     
     char string[500];
     int i = 0;
     if(obterTamanhoSudoku(sudoku, fp) == false || !quadradoPerfeito(sudoku)){
         destroiSudoku(sudoku);
-        fclose(fp);
+        //fclose(fp);
         return NULL;
     }
 
     criaSudoku(sudoku);
     // printf("tamanho: %d\n", sudoku->tamanho);
 
+    bool quebraDeLinha = false;
     while(!feof(fp)){
+        fgets(string, 500, fp);
+        if(string[0] == '\n' || strcmp(string, "\r\n") == 0){
+            //printf("1 quebra de linha\n");
+            if(quebraDeLinha){
+                //printf("2 quebra de linha\n");
+                break;
+            }
+            quebraDeLinha = true;
+            continue;
+        }
+        quebraDeLinha = false;
         if(i >= sudoku->tamanho){
             destroiSudoku(sudoku);
-            fclose(fp);
+            //fclose(fp);
             return NULL;
         }
-        fgets(string, 500, fp);
-        if(string[0] == '\n' || strcmp(string, "\r\n") == 0)
-            continue;
+
         substituiQuebraDeLinha(string);
         char* token = strtok(string, " ");
         // printf("%s\n", token);
@@ -145,7 +150,7 @@ Sudoku* geraSudoku(char* arquivoEntrada){
                 break;
             if(j >= sudoku->tamanho){
                 destroiSudoku(sudoku);
-                fclose(fp);
+                //fclose(fp);
                 return NULL;
             }
 
@@ -162,17 +167,18 @@ Sudoku* geraSudoku(char* arquivoEntrada){
         }
         if(j != sudoku->tamanho){
             destroiSudoku(sudoku);
-            fclose(fp);
+            //fclose(fp);
             return NULL;
         }
         i++;
     }
     if(i < sudoku->tamanho){
+        printf("menor\n");
         destroiSudoku(sudoku);
-        fclose(fp);
+        //fclose(fp);
         return NULL;
     }
-    fclose(fp);
+    //fclose(fp);
     return sudoku;
 }
 
@@ -262,36 +268,57 @@ void destroiSudoku(Sudoku* s){
     free(s);
 }
 
+void printaResultado(Sudoku *s, FILE* fs){
+    for(int i = 0; i < s->tamanho; i++){
+        for(int j = 0; j < s->tamanho; j++){
+            fprintf(fs, "%d ", s->matrizSudoku[i][j]);
+            if((j+1) % s->raizTamanho == 0)
+                fprintf(fs, " ");
+            }
+            if((i+1) % s->raizTamanho == 0)
+                fprintf(fs, "\n");
+            fprintf(fs, "\n");
+            }
+}
+
 int main(int argc, char* argv[]){
     char* entrada = NULL;
     char* saida = NULL;
     int N = 1;
+    
     obterNomeArquivos(argc, argv, &entrada, &saida, &N);
-    //comeca loop, passar abertura de arquivo pra main
-    Sudoku* s = geraSudoku(entrada);
-    if(s == NULL){
-        printf("Entrada de sudoku invalido\n");
+    FILE* fe = fopen(entrada, "r");
+    if(fe == NULL){
+        printf("Erro na abertura do arquivo de entrada!\n");
         return 0;
     }
-    for(int i = 0; i < s->tamanho; i++){
-        for(int j = 0; j < s->tamanho; j++)
-            printf("%d ", s->matrizSudoku[i][j]);
-        printf("\n");
+    FILE* fs = fopen(saida, "w");
+    if(fe == NULL){
+        printf("Erro na abertura do arquivo de saida!\n");
+        return 0;
     }
-    int resultado = resolveSudoku(s);
-    printf("\n\n%d\n\n", resultado);
-    if(resultado)
+    //comeca loop, passar abertura de arquivo pra main
+    while(!feof(fe)){
+        Sudoku* s = geraSudoku(fe);
+        if(s == NULL){
+            fprintf(fs, "Entrada de sudoku invalido!\n");
+            return 0;
+        }
         for(int i = 0; i < s->tamanho; i++){
-            for(int j = 0; j < s->tamanho; j++){
+            for(int j = 0; j < s->tamanho; j++)
                 printf("%d ", s->matrizSudoku[i][j]);
-                if((j+1) % s->raizTamanho == 0)
-                    printf(" ");
-            }
-            if((i+1) % s->raizTamanho == 0)
-                printf("\n");
             printf("\n");
         }
-    destroiSudoku(s);
+        int resultado = resolveSudoku(s);
+        printf("\n\n%d\n\n", resultado);
+        if(resultado){
+            printaResultado(s, fs);
+            fprintf(fs, "\n");
+        }
+        destroiSudoku(s);
+    }
+    fclose(fe);
+    fclose(fs);
     //termina loop 
     
     return 0;
