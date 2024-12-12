@@ -41,10 +41,11 @@ void obterNomeArquivos(int argc, char* argv[], char** arquivoEntrada, char** arq
     }
 }
 
+
+
 Sudoku* geraSudoku(FILE* fp){
     int valor;
     Sudoku* sudoku = (Sudoku*)malloc(sizeof(Sudoku));
-    sudoku->tamHeap = 0;
     
     char string[500];
     int i = 0;

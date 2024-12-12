@@ -51,6 +51,8 @@ void criaSudoku(Sudoku* s){
         s->grids[i] = (Grid*)calloc(s->raizTamanho, sizeof(Grid));
     criaVetoresValidos(s);
     preencheValidos(s);
+    s->heap = (Celula*)calloc(s->tamanho*s->tamanho, sizeof(Celula*));
+    s->tamHeap= 0;
 }
 
 bool obterTamanhoSudoku(Sudoku* s, FILE* f){
@@ -118,7 +120,26 @@ bool backtracking(Sudoku* sudoku, int n, int m){
     return true;
 }
 
-// bool heuristica(Sudoku* sudoku, int n, int m){}
+void preencheHeap(Sudoku* s){
+    if(s == NULL){
+        printf("Sudoku nulo\n");
+        exit(1);
+    }
+    Celula celula; 
+    for(int i =0; i < s->tamanho; i++){
+        for(int j = 0; j < s->tamanho; j++){
+            if(s->matrizSudoku[i][j] == 0){
+                celula.linha = i;
+                celula.coluna = j;
+                celula.num_possiveis = 0;
+                for(int k = 1; k <= s->tamanho; k++)
+                    if(s->linhas[i].validos[k] && s->colunas[j].validos[k] && s->grids[i/s->raizTamanho][j/s->raizTamanho].validos[k])
+                        celula.num_possiveis++;
+                insere(s, celula);
+            }
+        }
+    }
+}
 
 bool resolveSudoku(Sudoku* sudoku){
     return backtracking(sudoku, 0, 0);
@@ -158,5 +179,29 @@ void destroiSudoku(Sudoku* s){
             free(s->grids[i]);
         free(s->grids);
     }
+    free(s->heap);
     free(s);
+}
+
+bool heuristica(Sudoku* sudoku){
+    if(sudoku == NULL)
+        return false;
+    Celula celula = removeMin(sudoku);
+    for(int k = 1; k <= sudoku->tamanho; k++){
+        if(sudoku->colunas[celula.linha].validos[k-1] == 0)
+            continue;
+        if(sudoku->linhas[celula.coluna].validos[k-1] == 0)
+            continue;
+        if(sudoku->grids[celula.linha/sudoku->raizTamanho][celula.coluna/sudoku->raizTamanho].validos[k-1] == 0)
+            continue;
+        
+        sudoku->matrizSudoku[celula.linha][celula.coluna] = k;
+        validaValor(sudoku, celula.linha, celula.coluna, k, 0);
+        bool retorno = heuristica(sudoku);
+        if(retorno)
+            return true;
+        else
+            continue;
+    }
+    return false;
 }

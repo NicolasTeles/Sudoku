@@ -36,7 +36,7 @@ int main(int argc, char* argv[]){
                 printf("%d ", s->matrizSudoku[i][j]);
             printf("\n");
         }
-        int resultado = resolveSudoku(s);
+        int resultado = heuristica(s);
         printf("\n\n%d\n\n", resultado);
         if(resultado){
             printaResultado(s, fs);

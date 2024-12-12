@@ -36,7 +36,6 @@ void heapify(Sudoku* sudoku, int i){
 }
 
 bool insere(Sudoku* sudoku, Celula elemento){
-
     sudoku->tamHeap++;
     int i = sudoku->tamHeap-1;
     sudoku->heap[i] = elemento;

@@ -17,8 +17,8 @@ int pai(int i);
 
 void heapify(Sudoku* sudoku, int i);
 
-bool insere(Sudoku* sudoku, int elemento);
+bool insere(Sudoku* sudoku, Celula elemento);
 
-int removeMin(Sudoku* sudoku);
+Celula removeMin(Sudoku* sudoku);
 
 #endif
