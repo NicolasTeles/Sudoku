@@ -31,6 +31,8 @@ typedef struct sudoku{
     Coluna *colunas;
     Grid **grids;
     int** matrizSudoku;
+    int numVazios;
+    Celula* celulas;
 }Sudoku;
 
 typedef struct celula{

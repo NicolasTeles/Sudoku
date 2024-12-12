@@ -71,7 +71,7 @@ MinHeap* constroiHeapVazio(int n){
     return heap;
 }
 
-MinHeap* constroiHeap(int* vetor, int n, int capacidade;){
+MinHeap* constroiHeap(int* vetor, int n, int capacidade){
     if(n > capacidade){
         printf("tamanho do vetor maior que capacidade\n");
         return NULL;
