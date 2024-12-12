@@ -3,8 +3,8 @@
 #include <stdbool.h>
 #include "minHeap.h"
 
-int troca(int* a, int* b){
-    int temp = *a;
+void troca(Celula* a, Celula* b){
+    Celula temp = *a;
     *a = *b;
     *b = temp;
 }
@@ -21,65 +21,53 @@ int pai(int i){
     return (i-1)/2;
 }
 
-void heapify(MinHeap* heap, int i){
+void heapify(Sudoku* sudoku, int i){
     int e = esquerda(i);
     int d = direita(i);
     int menor = i;
-    if(e < heap->tam && heap->vetor[e] < heap->vetor[i])
+    if(e < sudoku->tamHeap && sudoku->heap[e].num_possiveis < sudoku->heap[i].num_possiveis)
         menor = e;
-    if(d < heap->tam && heap->vetor[d] < heap->vetor[menor])
+    if(d < sudoku->tamHeap && sudoku->heap[d].num_possiveis < sudoku->heap[menor].num_possiveis)
         menor = d;
     if(menor != i){
-        troca(&heap->vetor[menor], heap->vetor[i]);
-        heapify(heap, menor);
+        troca(&sudoku->heap[menor], &sudoku->heap[i]);
+        heapify(sudoku, menor);
     }
 }
 
-bool insere(MinHeap* heap, int elemento){
-    if(heap->tam == heap->capacidade){
-        printf("Impossivel inserir, capacidade alcancada");
-        return false;
-    }
+bool insere(Sudoku* sudoku, Celula elemento){
 
-    heap->tam++;
-    int i = heap->tam-1;
-    heap->vetor[i] = elemento;
-    while(i != 0 && heap->vetor[pai(i)] > heap->vetor[i]){
-        troca(&heap->vetor[pai(i)], &heap->vetor[i]);
+    sudoku->tamHeap++;
+    int i = sudoku->tamHeap-1;
+    sudoku->heap[i] = elemento;
+    while(i != 0 && sudoku->heap[pai(i)].num_possiveis > sudoku->heap[i].num_possiveis){
+        troca(&sudoku->heap[pai(i)], &sudoku->heap[i]);
         i = pai(i);
     }
 }
 
-int removeMin(MinHeap* heap){
-    if(heap->tam == 1){
-        heap->tam--;
-        return heap->vetor[0];
+Celula removeMin(Sudoku* sudoku){
+    if(sudoku->tamHeap == 1){
+        sudoku->tamHeap--;
+        return sudoku->heap[0];
     }
 
-    int raiz = heap->vetor[0];
-    heap->vetor[0] = heap->vetor[heap->tam-1];
-    heap->tam--;
-    heapify(heap, 0);
+    Celula raiz = sudoku->heap[0];
+    sudoku->heap[0] = sudoku->heap[sudoku->tamHeap-1];
+    sudoku->tamHeap--;
+    heapify(sudoku, 0);
 
     return raiz;
 }
 
-MinHeap* constroiHeapVazio(int n){
-    MinHeap* heap = (MinHeap*)malloc(sizeof(MinHeap));
-    heap->vetor = (int*)calloc(n, sizeof(sizeof(int)));
-    heap->capacidade = n;
-    return heap;
+void constroiHeapVazio(Sudoku* sudoku, int n){
+    sudoku->heap = (Celula*)calloc(n, sizeof(sizeof(int)));
 }
 
-MinHeap* constroiHeap(int* vetor, int n, int capacidade){
-    if(n > capacidade){
-        printf("tamanho do vetor maior que capacidade\n");
-        return NULL;
-    }
-    MinHeap* heap = constroiHeapVazio(capacidade);
-    for(int i = 0; i < n, i++)
-        heap->vetor[i] = vetor[i];
-    for(int i = (heap->tam/2)-1; i >= 0; i--)
-        heapify(heap, i);
-    return heap;
+void constroiHeap(Sudoku* sudoku, Celula* vetor, int n){
+    constroiHeapVazio(sudoku, n);
+    for(int i = 0; i < n; i++)
+        sudoku->heap[i] = vetor[i];
+    for(int i = (sudoku->tamHeap/2)-1; i >= 0; i--)
+        heapify(sudoku, i);
 }

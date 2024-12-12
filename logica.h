@@ -31,13 +31,13 @@ typedef struct sudoku{
     Coluna *colunas;
     Grid **grids;
     int** matrizSudoku;
-    int numVazios;
-    Celula* celulas;
+    int tamHeap;
+    Celula* heap;
 }Sudoku;
 
 typedef struct celula{
-    int i;
-    int j;
+    int linha;
+    int coluna;
     int num_possiveis;
 } Celula;
 

@@ -4,14 +4,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include "entradaSaida.h"
+#include "logica.h"
 
-typedef struct minHeap{
-    int tam;
-    int capacidade;
-    int* vetor;
-}MinHeap;
-
-int troca(int* a, int* b);
+void troca(Celula* a, Celula* b);
 
 int esquerda(int i);
 
@@ -19,10 +15,10 @@ int direita(int i);
 
 int pai(int i);
 
-void heapify(MinHeap* heap, int i);
+void heapify(Sudoku* sudoku, int i);
 
-bool insere(MinHeap* heap, int elemento);
+bool insere(Sudoku* sudoku, int elemento);
 
-int removeMin(MinHeap* heap);
+int removeMin(Sudoku* sudoku);
 
 #endif
