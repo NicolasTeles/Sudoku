@@ -186,6 +186,8 @@ void destroiSudoku(Sudoku* s){
 bool heuristica(Sudoku* sudoku){
     if(sudoku == NULL)
         return false;
+    if(sudoku->tamHeap == 0)
+        return true;
     Celula celula = removeMin(sudoku);
     for(int k = 1; k <= sudoku->tamanho; k++){
         if(sudoku->colunas[celula.linha].validos[k-1] == 0)

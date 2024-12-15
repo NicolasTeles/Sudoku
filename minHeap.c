@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include "entradaSaida.h"
+#include "logica.h"
 #include "minHeap.h"
 
 void troca(Celula* a, Celula* b){

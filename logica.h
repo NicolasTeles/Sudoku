@@ -24,6 +24,12 @@ typedef struct grid{
     int *validos;
 }Grid;
 
+typedef struct celula{
+    int linha;
+    int coluna;
+    int num_possiveis;
+} Celula;
+
 typedef struct sudoku{
     int tamanho;
     int raizTamanho;
@@ -34,12 +40,6 @@ typedef struct sudoku{
     int tamHeap;
     Celula* heap;
 }Sudoku;
-
-typedef struct celula{
-    int linha;
-    int coluna;
-    int num_possiveis;
-} Celula;
 
 void validaValor(Sudoku* s, int i, int j, int valor, int boolean);
 

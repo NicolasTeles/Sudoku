@@ -9,6 +9,8 @@
 #include "entradaSaida.h"
 #include "minHeap.h"
 
+typedef struct sudoku Sudoku;
+
 void substituiQuebraDeLinha(char* string){
     int n = strlen(string);
 
