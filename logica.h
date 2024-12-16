@@ -50,9 +50,11 @@ void preencheValidos(Sudoku* s);
 
 void preencheHeap(Sudoku* s);
 
-int testaValores(Sudoku* s, int i, int j);
+int testaValores(Sudoku* s, int i, int j, FILE* fs);
 
-bool backtracking(Sudoku * sudoku, int n, int m);
+bool backtracking(Sudoku * sudoku, int n, int m, FILE*fs);
+
+bool resolveSudoku(Sudoku* sudoku, FILE* fs);
 
 bool obterTamanhoSudoku(Sudoku* s, FILE* f);
 

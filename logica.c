@@ -144,7 +144,7 @@ bool obterTamanhoSudoku(Sudoku* s, FILE* f){
     return true;
 }
 
-int testaValores(Sudoku* s, int i, int j){
+int testaValores(Sudoku* s, int i, int j, FILE* fs){
     if(s->matrizSudoku[i][j] != 0)
         return -1;
     bool limite;
@@ -159,7 +159,7 @@ int testaValores(Sudoku* s, int i, int j){
         s->matrizSudoku[i][j] = k;
         validaValor(s, i, j, k, 0);
         limite = (j+1 >= s->tamanho);
-        if(backtracking(s, (limite ? i+1 : i), (limite ? 0 : j+1) ) == true)
+        if(backtracking(s, (limite ? i+1 : i), (limite ? 0 : j+1) , fs) == true)
             return 1;
         else{
             s->matrizSudoku[i][j] = 0;
@@ -169,14 +169,15 @@ int testaValores(Sudoku* s, int i, int j){
     return 0;
 }
 
-bool backtracking(Sudoku* sudoku, int n, int m){
+bool backtracking(Sudoku* sudoku, int n, int m, FILE* fs){
     if(sudoku == NULL)
         return false;
     int retorno;
-    printaMatriz(sudoku->matrizSudoku, sudoku->tamanho);
+    printaMatrizResultado(sudoku, &fs);
+    fprintf(fs, "\n");
     for(int i = n; i < sudoku->tamanho; i++){
         for(int j = (i==n ? m : 0); j < sudoku->tamanho; j++){
-            retorno = testaValores(sudoku, i, j);
+            retorno = testaValores(sudoku, i, j, fs);
             if(retorno == -1)
                 continue;
             if(retorno == 0){
@@ -210,8 +211,8 @@ void preencheHeap(Sudoku* s){
     }
 }
 
-bool resolveSudoku(Sudoku* sudoku){
-    return backtracking(sudoku, 0, 0);
+bool resolveSudoku(Sudoku* sudoku, FILE* fs){
+    return backtracking(sudoku, 0, 0, fs);
 }
 
 void destroiValidos(Sudoku* s){

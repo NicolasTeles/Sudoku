@@ -33,7 +33,7 @@ int main(int argc, char* argv[]){
         printaMatriz(s->matrizSudoku, s->tamanho);
         //preencheHeap(s); //quando colocar o if de qual modo usar
         //int resultado = heuristica(s);
-        int resultado = backtracking(s, 0, 0);
+        int resultado = backtracking(s, 0, 0, fs);
         printf("\n\n%d\n\n", resultado);
         if(resultado){
             printaResultado(s, fs);

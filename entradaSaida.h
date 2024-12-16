@@ -9,6 +9,8 @@
 #include <stdbool.h>
 #include "logica.h"
 
+void printaMatrizResultado(Sudoku *s, FILE** fs);
+
 void printaMatriz(int** matriz, int tamanho);
 
 void substituiBarraR(char* string);

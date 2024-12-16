@@ -7,6 +7,21 @@
 #include <math.h>
 #include "entradaSaida.h"
 
+void printaMatrizResultado(Sudoku *s, FILE** fs){
+    fclose(*fs);
+    *fs = fopen("saida.txt", "w");
+    for(int i = 0; i < s->tamanho; i++){
+        for(int j = 0; j < s->tamanho; j++){
+            fprintf(fs, "%d ", s->matrizSudoku[i][j]);
+            if((j+1) % s->raizTamanho == 0)
+                fprintf(fs, " ");
+            }
+            if((i+1) % s->raizTamanho == 0)
+                fprintf(fs, "\n");
+            fprintf(fs, "\n");
+            }
+}
+
 void printaMatriz(int** matriz, int tamanho){
     for(int i = 0; i < tamanho; i++){
             for(int j = 0; j < tamanho; j++)
