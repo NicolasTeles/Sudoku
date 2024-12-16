@@ -12,13 +12,13 @@ void printaMatrizResultado(Sudoku *s, FILE** fs){
     *fs = fopen("saida.txt", "w");
     for(int i = 0; i < s->tamanho; i++){
         for(int j = 0; j < s->tamanho; j++){
-            fprintf(fs, "%d ", s->matrizSudoku[i][j]);
+            fprintf(*fs, "%d ", s->matrizSudoku[i][j]);
             if((j+1) % s->raizTamanho == 0)
-                fprintf(fs, " ");
+                fprintf(*fs, " ");
             }
             if((i+1) % s->raizTamanho == 0)
-                fprintf(fs, "\n");
-            fprintf(fs, "\n");
+                fprintf(*fs, "\n");
+            fprintf(*fs, "\n");
             }
 }
 
