@@ -8,7 +8,10 @@
 #include <string.h>
 #include <stdbool.h>
 #include "logica.h"
-#include "entradaSaida.h"
+
+void printaMatriz(int** matriz, int tamanho);
+
+void substituiBarraR(char* string);
 
 void substituiQuebraDeLinha(char* string);
 

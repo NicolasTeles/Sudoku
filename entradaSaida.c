@@ -5,11 +5,24 @@
 #include <string.h>
 #include <stdbool.h>
 #include <math.h>
-#include "logica.h"
 #include "entradaSaida.h"
-#include "minHeap.h"
 
-typedef struct sudoku Sudoku;
+void printaMatriz(int** matriz, int tamanho){
+    for(int i = 0; i < tamanho; i++){
+            for(int j = 0; j < tamanho; j++)
+                printf("%d ", matriz[i][j]);
+            printf("\n");
+        }
+}
+
+void substituiBarraR(char* string){
+    int n = strlen(string);
+
+    for(int j = 0; j < n; j++){
+        if(string[j] == '\r')
+            string[j] = '\n';
+        }
+}
 
 void substituiQuebraDeLinha(char* string){
     int n = strlen(string);
@@ -79,7 +92,9 @@ Sudoku* geraSudoku(FILE* fp){
             return NULL;
         }
 
+        //substituiBarraR(string);
         substituiQuebraDeLinha(string);
+        printf("%s\n", string);
         char* token = strtok(string, " ");
         // printf("%s\n", token);
         int j;
@@ -108,10 +123,12 @@ Sudoku* geraSudoku(FILE* fp){
             //fclose(fp);
             return NULL;
         }
+        printf("Vo somar\n");
         i++;
+        printf("i=%d\n", i);
     }
     if(i < sudoku->tamanho){
-        printf("menor\n");
+        printf("menor i=%d tam=%d\n", i, sudoku->tamanho);
         destroiSudoku(sudoku);
         //fclose(fp);
         return NULL;

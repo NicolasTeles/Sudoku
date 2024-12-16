@@ -6,7 +6,6 @@
 #include <math.h>
 #include "logica.h"
 #include "entradaSaida.h"
-#include "minHeap.h"
 
 int main(int argc, char* argv[]){
     char* entrada = NULL;
@@ -20,7 +19,7 @@ int main(int argc, char* argv[]){
         return 0;
     }
     FILE* fs = fopen(saida, "w");
-    if(fe == NULL){
+    if(fs == NULL){
         printf("Erro na abertura do arquivo de saida!\n");
         return 0;
     }
@@ -29,24 +28,23 @@ int main(int argc, char* argv[]){
         Sudoku* s = geraSudoku(fe);
         if(s == NULL){
             fprintf(fs, "Entrada de sudoku invalido!\n");
-            return 0;
+            continue;
         }
-        for(int i = 0; i < s->tamanho; i++){
-            for(int j = 0; j < s->tamanho; j++)
-                printf("%d ", s->matrizSudoku[i][j]);
-            printf("\n");
-        }
-        int resultado = heuristica(s);
+        printaMatriz(s->matrizSudoku, s->tamanho);
+        //preencheHeap(s); //quando colocar o if de qual modo usar
+        //int resultado = heuristica(s);
+        int resultado = backtracking(s, 0, 0);
         printf("\n\n%d\n\n", resultado);
         if(resultado){
             printaResultado(s, fs);
             fprintf(fs, "\n");
-        }
+        }else
+            fprintf(fs, "Sudoku Impossível\n\n");
         destroiSudoku(s);
     }
     fclose(fe);
     fclose(fs);
-    //termina loop 
+    //termina loop
     
     return 0;
 }

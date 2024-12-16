@@ -60,6 +60,12 @@
     "*.embeddedhtml": "html",
     "unistd.h": "c",
     "stdbool.h": "c",
-    "stdio.h": "c"
+    "stdio.h": "c",
+    "logica.h": "c",
+    "string.h": "c",
+    "entradasaida.h": "c",
+    "minheap.h": "c",
+    "math.h": "c",
+    "getopt.h": "c"
   }
 }
