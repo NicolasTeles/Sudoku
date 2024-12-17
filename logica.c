@@ -82,6 +82,7 @@ void validaValor(Sudoku* s, int i, int j, int valor, int boolean){
 }
 
 bool quadradoPerfeito(Sudoku* s){
+    printf("%d\n", s->raizTamanho*s->raizTamanho == s->tamanho);
     return s->raizTamanho*s->raizTamanho == s->tamanho;
 }
 
@@ -125,7 +126,7 @@ void criaSudoku(Sudoku* s){
 bool obterTamanhoSudoku(Sudoku* s, FILE* f){
     if(s == NULL || f == NULL)
         return false;
-    
+    //printf("alo1\n");
     char newString[500];
     long posicao_anterior = ftell(f);
     fgets(newString, 500, f);
@@ -173,16 +174,13 @@ bool backtracking(Sudoku* sudoku, int n, int m, FILE* fs){
     if(sudoku == NULL)
         return false;
     int retorno;
-    printaMatrizResultado(sudoku, &fs);
-    fprintf(fs, "\n");
     for(int i = n; i < sudoku->tamanho; i++){
         for(int j = (i==n ? m : 0); j < sudoku->tamanho; j++){
             retorno = testaValores(sudoku, i, j, fs);
             if(retorno == -1)
                 continue;
-            if(retorno == 0){
-            printf("oi\n");
-                return false;}
+            if(retorno == 0)
+                return false;
             if(retorno == 1)
                 return true;
         }
@@ -221,8 +219,13 @@ void destroiValidos(Sudoku* s){
     for(int i = 0; i < s->raizTamanho; i++){
         for(int j = 0; j < s->raizTamanho; j++){
             free(s->colunas[s->raizTamanho*i+j].validos);
+            s->colunas[s->raizTamanho*i+j].validos = NULL;
+
             free(s->linhas[s->raizTamanho*i+j].validos);
+            s->linhas[s->raizTamanho*i+j].validos = NULL;
+
             free(s->grids[i][j].validos);
+            s->grids[i][j].validos = NULL;
         }
     }
 }
@@ -230,9 +233,15 @@ void destroiValidos(Sudoku* s){
 void destroiMatriz(Sudoku *s){
     if(s->matrizSudoku == NULL)
         return;
-    for(int i = 0; i < s->tamanho; i++)
-        free(s->matrizSudoku[i]);
+    //printf("Cheguei aqui\n");
+    for(int i = 0; i < s->tamanho; i++){
+        //printf("alo tam=%d\n", s->tamanho);
+        if(s->matrizSudoku[i] != NULL)
+            free(s->matrizSudoku[i]);
+            s->matrizSudoku[i] = NULL;
+        }
     free(s->matrizSudoku);
+    s->matrizSudoku = NULL;
 }
 
 void destroiSudoku(Sudoku* s){
@@ -242,15 +251,23 @@ void destroiSudoku(Sudoku* s){
     destroiValidos(s);
     if(s->colunas != NULL && s->linhas != NULL){
         free(s->colunas);
+        s->colunas = NULL;
+
         free(s->linhas);
+        s->linhas = NULL;
     }
     if(s->grids != NULL){
-        for(int i = 0; i < s->raizTamanho; i++)
+        for(int i = 0; i < s->raizTamanho; i++){
             free(s->grids[i]);
+            s->grids[i] = NULL;
+        }
         free(s->grids);
+        s->grids = NULL;
     }
     free(s->heap);
+    s->heap = NULL;
     free(s);
+    s = NULL;
 }
 
 bool heuristica(Sudoku* sudoku){

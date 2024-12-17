@@ -7,7 +7,7 @@
 #include <math.h>
 #include "entradaSaida.h"
 
-void printaMatrizResultado(Sudoku *s, FILE** fs){
+/*void printaMatrizResultado(Sudoku *s, FILE** fs){
     fclose(*fs);
     *fs = fopen("saida.txt", "w");
     for(int i = 0; i < s->tamanho; i++){
@@ -20,7 +20,7 @@ void printaMatrizResultado(Sudoku *s, FILE** fs){
                 fprintf(*fs, "\n");
             fprintf(*fs, "\n");
             }
-}
+}*/
 
 void printaMatriz(int** matriz, int tamanho){
     for(int i = 0; i < tamanho; i++){
@@ -71,7 +71,21 @@ void obterNomeArquivos(int argc, char* argv[], char** arquivoEntrada, char** arq
     }
 }
 
-
+void proximoSudoku(FILE* fp){
+    bool quebraDeLinha;
+    char str[500];
+    while(!feof(fp)){
+        fgets(str, 500, fp);
+        if(str[0] == '\n' || strcmp(str, "\r\n") == 0){
+            if(quebraDeLinha){
+                return;
+            }
+            quebraDeLinha = true;
+            continue;
+        }
+        quebraDeLinha = false;
+    }
+}
 
 Sudoku* geraSudoku(FILE* fp){
     int valor;
@@ -80,13 +94,11 @@ Sudoku* geraSudoku(FILE* fp){
     char string[500];
     int i = 0;
     if(obterTamanhoSudoku(sudoku, fp) == false || !quadradoPerfeito(sudoku)){
+        proximoSudoku(fp);
         destroiSudoku(sudoku);
-        //fclose(fp);
         return NULL;
     }
-
     criaSudoku(sudoku);
-    // printf("tamanho: %d\n", sudoku->tamanho);
 
     bool quebraDeLinha = false;
     while(!feof(fp)){
@@ -102,27 +114,35 @@ Sudoku* geraSudoku(FILE* fp){
         }
         quebraDeLinha = false;
         if(i >= sudoku->tamanho){
+            proximoSudoku(fp);
             destroiSudoku(sudoku);
-            //fclose(fp);
             return NULL;
         }
 
         //substituiBarraR(string);
         substituiQuebraDeLinha(string);
-        printf("%s\n", string);
+        //printf("%s\n", string);
         char* token = strtok(string, " ");
         // printf("%s\n", token);
         int j;
         for(j = 0; ; j++){
             if(token == NULL)
                 break;
+            if(token[0] == '\0')
+                break;
+            if(token[0] == '\n' || strcmp(token, "\r\n") == 0)
+                break;
+            if(token[0] == ' ')
+                break;
+                
             if(j >= sudoku->tamanho){
+                proximoSudoku(fp);
                 destroiSudoku(sudoku);
-                //fclose(fp);
                 return NULL;
             }
 
             if(token[0] == 'v'){
+                //sudoku->tamHeap++;
                 sudoku->matrizSudoku[i][j] = 0;
                 token = strtok(NULL, " ");
                 continue;
@@ -134,16 +154,17 @@ Sudoku* geraSudoku(FILE* fp){
             // printf("%d %d %d\n", i, j, matriz[i][j]);
         }
         if(j != sudoku->tamanho){
+            proximoSudoku(fp);
             destroiSudoku(sudoku);
-            //fclose(fp);
             return NULL;
         }
-        printf("Vo somar\n");
+        //printf("Vo somar\n");
         i++;
-        printf("i=%d\n", i);
+        //printf("i=%d\n", i);
     }
     if(i < sudoku->tamanho){
         printf("menor i=%d tam=%d\n", i, sudoku->tamanho);
+        proximoSudoku(fp);
         destroiSudoku(sudoku);
         //fclose(fp);
         return NULL;

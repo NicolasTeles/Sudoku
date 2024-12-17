@@ -27,7 +27,7 @@ int main(int argc, char* argv[]){
     while(!feof(fe)){
         Sudoku* s = geraSudoku(fe);
         if(s == NULL){
-            fprintf(fs, "Entrada de sudoku invalido!\n");
+            fprintf(fs, "Entrada de sudoku invalido!\n\n");
             continue;
         }
         printaMatriz(s->matrizSudoku, s->tamanho);

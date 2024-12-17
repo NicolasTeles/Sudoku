@@ -17,6 +17,8 @@ void substituiBarraR(char* string);
 
 void substituiQuebraDeLinha(char* string);
 
+void proximoSudoku(FILE* fp);
+
 void obterNomeArquivos(int argc, char* argv[], char** arquivoEntrada, char** arquivoSaida, int* n);
 
 Sudoku* geraSudoku(FILE* fp);
