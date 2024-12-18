@@ -63,14 +63,6 @@ Celula removeMin(Sudoku* sudoku){
     return raiz;
 }
 
-void constroiHeap(Sudoku* sudoku, Celula* vetor, int n){
-    sudoku->heap = (Celula*)calloc(n, sizeof(sizeof(int)));
-    for(int i = 0; i < n; i++)
-        sudoku->heap[i] = vetor[i];
-    for(int i = (sudoku->tamHeap/2)-1; i >= 0; i--)
-        heapify(sudoku, i);
-}
-
 void validaValor(Sudoku* s, int i, int j, int valor, int boolean){
     s->colunas[j].validos[valor-1] = boolean;
     s->linhas[i].validos[valor-1] = boolean;

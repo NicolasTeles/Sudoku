@@ -42,8 +42,6 @@ void validaValor(Sudoku* s, int i, int j, int valor, int boolean);
 
 bool quadradoPerfeito(Sudoku* s);
 
-void constroiHeap(Sudoku* sudoku, Celula* vetor, int n);
-
 void criaSudoku(Sudoku* s);
 
 void criaVetoresValidos(Sudoku* s);
