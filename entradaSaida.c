@@ -7,21 +7,6 @@
 #include <math.h>
 #include "entradaSaida.h"
 
-/*void printaMatrizResultado(Sudoku *s, FILE** fs){
-    fclose(*fs);
-    *fs = fopen("saida.txt", "w");
-    for(int i = 0; i < s->tamanho; i++){
-        for(int j = 0; j < s->tamanho; j++){
-            fprintf(*fs, "%d ", s->matrizSudoku[i][j]);
-            if((j+1) % s->raizTamanho == 0)
-                fprintf(*fs, " ");
-            }
-            if((i+1) % s->raizTamanho == 0)
-                fprintf(*fs, "\n");
-            fprintf(*fs, "\n");
-            }
-}*/
-
 void printaMatriz(int** matriz, int tamanho){
     for(int i = 0; i < tamanho; i++){
             for(int j = 0; j < tamanho; j++)
@@ -30,14 +15,14 @@ void printaMatriz(int** matriz, int tamanho){
         }
 }
 
-void substituiBarraR(char* string){
+/*void substituiBarraR(char* string){
     int n = strlen(string);
 
     for(int j = 0; j < n; j++){
         if(string[j] == '\r')
             string[j] = '\n';
         }
-}
+}*/
 
 void substituiQuebraDeLinha(char* string){
     int n = strlen(string);
@@ -48,9 +33,9 @@ void substituiQuebraDeLinha(char* string){
         }
 }
 
-void obterNomeArquivos(int argc, char* argv[], char** arquivoEntrada, char** arquivoSaida, int* N){
+void obterNomeArquivos(int argc, char* argv[], char** arquivoEntrada, char** arquivoSaida, char *modo){
     int opt;
-    while((opt = getopt(argc, argv, "e:s:n:")) != -1){
+    while((opt = getopt(argc, argv, "e:s:m:")) != -1){
         switch (opt){
             case 'e':
                 *arquivoEntrada = optarg;
@@ -60,8 +45,13 @@ void obterNomeArquivos(int argc, char* argv[], char** arquivoEntrada, char** arq
                 *arquivoSaida = optarg;
                 break;
 
-            case 'n':
-                *N = atoi(optarg);
+            case 'm':
+                if(optarg[0] != 'h' && optarg[0] != 'b'){
+                    printf("stting: %s char: %c\n", optarg, optarg[0]);
+                    printf("Uso correto: %s -e <arquivo de entrada> -s <arquivo de saida>\n", argv[0]);
+                    exit(1);
+                }
+                *modo = optarg[0];
                 break;
 
             default:
@@ -104,11 +94,8 @@ Sudoku* geraSudoku(FILE* fp){
     while(!feof(fp)){
         fgets(string, 500, fp);
         if(string[0] == '\n' || strcmp(string, "\r\n") == 0){
-            //printf("1 quebra de linha\n");
-            if(quebraDeLinha){
-                //printf("2 quebra de linha\n");
+            if(quebraDeLinha)
                 break;
-            }
             quebraDeLinha = true;
             continue;
         }
@@ -121,9 +108,7 @@ Sudoku* geraSudoku(FILE* fp){
 
         //substituiBarraR(string);
         substituiQuebraDeLinha(string);
-        //printf("%s\n", string);
         char* token = strtok(string, " ");
-        // printf("%s\n", token);
         int j;
         for(j = 0; ; j++){
             if(token == NULL)
@@ -142,7 +127,6 @@ Sudoku* geraSudoku(FILE* fp){
             }
 
             if(token[0] == 'v'){
-                //sudoku->tamHeap++;
                 sudoku->matrizSudoku[i][j] = 0;
                 token = strtok(NULL, " ");
                 continue;
@@ -151,25 +135,20 @@ Sudoku* geraSudoku(FILE* fp){
             validaValor(sudoku, i, j, valor, 0);
             
             token = strtok(NULL, " ");
-            // printf("%d %d %d\n", i, j, matriz[i][j]);
         }
         if(j != sudoku->tamanho){
             proximoSudoku(fp);
             destroiSudoku(sudoku);
             return NULL;
         }
-        //printf("Vo somar\n");
         i++;
-        //printf("i=%d\n", i);
     }
     if(i < sudoku->tamanho){
         printf("menor i=%d tam=%d\n", i, sudoku->tamanho);
         proximoSudoku(fp);
         destroiSudoku(sudoku);
-        //fclose(fp);
         return NULL;
     }
-    //fclose(fp);
     return sudoku;
 }
 

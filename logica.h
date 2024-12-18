@@ -42,6 +42,8 @@ void validaValor(Sudoku* s, int i, int j, int valor, int boolean);
 
 bool quadradoPerfeito(Sudoku* s);
 
+void constroiHeap(Sudoku* sudoku, Celula* vetor, int n);
+
 void criaSudoku(Sudoku* s);
 
 void criaVetoresValidos(Sudoku* s);
@@ -50,11 +52,11 @@ void preencheValidos(Sudoku* s);
 
 void preencheHeap(Sudoku* s);
 
-int testaValores(Sudoku* s, int i, int j, FILE* fs);
+int testaValores(Sudoku* s, int i, int j);
 
-bool backtracking(Sudoku * sudoku, int n, int m, FILE*fs);
+bool backtracking(Sudoku * sudoku, int n, int m);
 
-bool resolveSudoku(Sudoku* sudoku, FILE* fs);
+bool resolveSudoku(Sudoku* sudoku, char modo);
 
 bool obterTamanhoSudoku(Sudoku* s, FILE* f);
 
@@ -64,7 +66,7 @@ void destroiSudoku(Sudoku* s);
 
 void destroiMatriz(Sudoku* s);
 
-bool heuristica(Sudoku* sudoku, FILE *fs);
+bool heuristica(Sudoku* sudoku);
 
 void troca(Celula* a, Celula* b);
 

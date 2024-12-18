@@ -42,15 +42,8 @@ void heapify(Sudoku* sudoku, int i){
 bool insere(Sudoku* sudoku, Celula elemento){
     sudoku->tamHeap++;
     int i = sudoku->tamHeap-1;
-    if(i <= 0 || i >= 255){
-        printf("tamHeap=%d, tamaSudoku=%d, i=%d\n", sudoku->tamHeap, sudoku->tamanho, i);
-    }
     sudoku->heap[i] = elemento;
-    if(i <= 0 || i >= 255)
-        printf("linha=%d, coluna=%d, possiveis=%d\n", sudoku->heap[i].linha, sudoku->heap[i].coluna, sudoku->heap[i].num_possiveis);
     while(i != 0 && sudoku->heap[pai(i)].num_possiveis > sudoku->heap[i].num_possiveis){
-        if(i <= 0 || i >= 255)
-        printf("linha=%d, coluna=%d, possiveis=%d\n", sudoku->heap[i].linha, sudoku->heap[i].coluna, sudoku->heap[i].num_possiveis);
         troca(&sudoku->heap[pai(i)], &sudoku->heap[i]);
         i = pai(i);
     }
@@ -70,12 +63,8 @@ Celula removeMin(Sudoku* sudoku){
     return raiz;
 }
 
-void constroiHeapVazio(Sudoku* sudoku, int n){
-    sudoku->heap = (Celula*)calloc(n, sizeof(sizeof(int)));
-}
-
 void constroiHeap(Sudoku* sudoku, Celula* vetor, int n){
-    constroiHeapVazio(sudoku, n);
+    sudoku->heap = (Celula*)calloc(n, sizeof(sizeof(int)));
     for(int i = 0; i < n; i++)
         sudoku->heap[i] = vetor[i];
     for(int i = (sudoku->tamHeap/2)-1; i >= 0; i--)
@@ -131,8 +120,7 @@ void criaSudoku(Sudoku* s){
 
 bool obterTamanhoSudoku(Sudoku* s, FILE* f){
     if(s == NULL || f == NULL)
-        return false;
-    //printf("alo1\n");
+        return false;   
     char newString[500];
     long posicao_anterior = ftell(f);
     fgets(newString, 500, f);
@@ -151,7 +139,7 @@ bool obterTamanhoSudoku(Sudoku* s, FILE* f){
     return true;
 }
 
-int testaValores(Sudoku* s, int i, int j, FILE* fs){
+int testaValores(Sudoku* s, int i, int j){
     if(s->matrizSudoku[i][j] != 0)
         return -1;
     bool limite;
@@ -166,7 +154,7 @@ int testaValores(Sudoku* s, int i, int j, FILE* fs){
         s->matrizSudoku[i][j] = k;
         validaValor(s, i, j, k, 0);
         limite = (j+1 >= s->tamanho);
-        if(backtracking(s, (limite ? i+1 : i), (limite ? 0 : j+1) , fs) == true)
+        if(backtracking(s, (limite ? i+1 : i), (limite ? 0 : j+1)) == true)
             return 1;
         else{
             s->matrizSudoku[i][j] = 0;
@@ -176,13 +164,13 @@ int testaValores(Sudoku* s, int i, int j, FILE* fs){
     return 0;
 }
 
-bool backtracking(Sudoku* sudoku, int n, int m, FILE* fs){
+bool backtracking(Sudoku* sudoku, int n, int m){
     if(sudoku == NULL)
         return false;
     int retorno;
     for(int i = n; i < sudoku->tamanho; i++){
         for(int j = (i==n ? m : 0); j < sudoku->tamanho; j++){
-            retorno = testaValores(sudoku, i, j, fs);
+            retorno = testaValores(sudoku, i, j);
             if(retorno == -1)
                 continue;
             if(retorno == 0)
@@ -215,11 +203,20 @@ void preencheHeap(Sudoku* s){
     }
 }
 
-bool resolveSudoku(Sudoku* sudoku, FILE* fs){
-    return backtracking(sudoku, 0, 0, fs);
+bool resolveSudoku(Sudoku* sudoku, char modo){
+    if(modo == 'b'){
+        printf("resolvendo por backtracking\n");
+        return backtracking(sudoku, 0, 0);
+    }
+    if(modo == 'h'){
+        printf("resolvendo por heurística\n");
+        preencheHeap(sudoku);
+        return heuristica(sudoku);
+    }
+    return false;
 }
 
-bool heuristica(Sudoku* sudoku, FILE *fs){
+bool heuristica(Sudoku* sudoku){
     if(sudoku == NULL)
         return false;
     if(sudoku->tamHeap == 0)
@@ -238,10 +235,8 @@ bool heuristica(Sudoku* sudoku, FILE *fs){
             continue;
         
         sudoku->matrizSudoku[i][j] = k;
-        //fprintf(fs, "tamanho heap=%d, indices e %d %d, valor %d, validez da linha %d\n", sudoku->tamHeap, i, j, k, sudoku->linhas[i].validos[k-1]);
-        //printaResultado(sudoku, fs);
         validaValor(sudoku, i, j, k, 0);
-        bool retorno = heuristica(sudoku, fs);
+        bool retorno = heuristica(sudoku);
         if(retorno)
             return true;
         else{
@@ -274,9 +269,7 @@ void destroiValidos(Sudoku* s){
 void destroiMatriz(Sudoku *s){
     if(s->matrizSudoku == NULL)
         return;
-    //printf("Cheguei aqui\n");
     for(int i = 0; i < s->tamanho; i++){
-        //printf("alo tam=%d\n", s->tamanho);
         if(s->matrizSudoku[i] != NULL)
             free(s->matrizSudoku[i]);
             s->matrizSudoku[i] = NULL;

@@ -9,8 +9,6 @@
 #include <stdbool.h>
 #include "logica.h"
 
-void printaMatrizResultado(Sudoku *s, FILE** fs);
-
 void printaMatriz(int** matriz, int tamanho);
 
 void substituiBarraR(char* string);
@@ -19,7 +17,7 @@ void substituiQuebraDeLinha(char* string);
 
 void proximoSudoku(FILE* fp);
 
-void obterNomeArquivos(int argc, char* argv[], char** arquivoEntrada, char** arquivoSaida, int* n);
+void obterNomeArquivos(int argc, char* argv[], char** arquivoEntrada, char** arquivoSaida, char* modo);
 
 Sudoku* geraSudoku(FILE* fp);
 

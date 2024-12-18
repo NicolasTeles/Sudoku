@@ -10,9 +10,9 @@
 int main(int argc, char* argv[]){
     char* entrada = NULL;
     char* saida = NULL;
-    int N = 1;
+    char modo;
     
-    obterNomeArquivos(argc, argv, &entrada, &saida, &N);
+    obterNomeArquivos(argc, argv, &entrada, &saida, &modo);
     FILE* fe = fopen(entrada, "r");
     if(fe == NULL){
         printf("Erro na abertura do arquivo de entrada!\n");
@@ -23,7 +23,6 @@ int main(int argc, char* argv[]){
         printf("Erro na abertura do arquivo de saida!\n");
         return 0;
     }
-    //comeca loop, passar abertura de arquivo pra main
     while(!feof(fe)){
         Sudoku* s = geraSudoku(fe);
         if(s == NULL){
@@ -31,9 +30,7 @@ int main(int argc, char* argv[]){
             continue;
         }
         printaMatriz(s->matrizSudoku, s->tamanho);
-        preencheHeap(s); //quando colocar o if de qual modo usar
-        int resultado = heuristica(s, fs);
-        //int resultado = backtracking(s, 0, 0, fs);
+        int resultado = resolveSudoku(s, modo);
         printf("\n\n%d\n\n", resultado);
         if(resultado){
             printaResultado(s, fs);
@@ -44,7 +41,6 @@ int main(int argc, char* argv[]){
     }
     fclose(fe);
     fclose(fs);
-    //termina loop
     
     return 0;
 }
