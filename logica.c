@@ -42,8 +42,15 @@ void heapify(Sudoku* sudoku, int i){
 bool insere(Sudoku* sudoku, Celula elemento){
     sudoku->tamHeap++;
     int i = sudoku->tamHeap-1;
+    if(i <= 0 || i >= 255){
+        printf("tamHeap=%d, tamaSudoku=%d, i=%d\n", sudoku->tamHeap, sudoku->tamanho, i);
+    }
     sudoku->heap[i] = elemento;
+    if(i <= 0 || i >= 255)
+        printf("linha=%d, coluna=%d, possiveis=%d\n", sudoku->heap[i].linha, sudoku->heap[i].coluna, sudoku->heap[i].num_possiveis);
     while(i != 0 && sudoku->heap[pai(i)].num_possiveis > sudoku->heap[i].num_possiveis){
+        if(i <= 0 || i >= 255)
+        printf("linha=%d, coluna=%d, possiveis=%d\n", sudoku->heap[i].linha, sudoku->heap[i].coluna, sudoku->heap[i].num_possiveis);
         troca(&sudoku->heap[pai(i)], &sudoku->heap[i]);
         i = pai(i);
     }
@@ -82,17 +89,16 @@ void validaValor(Sudoku* s, int i, int j, int valor, int boolean){
 }
 
 bool quadradoPerfeito(Sudoku* s){
-    printf("%d\n", s->raizTamanho*s->raizTamanho == s->tamanho);
     return s->raizTamanho*s->raizTamanho == s->tamanho;
 }
 
 void preencheValidos(Sudoku* s){
     for(int i = 0; i < s->raizTamanho; i++){
         for(int j = 0; j < s->raizTamanho; j++){
-            for(int k = 0; k < s->tamanho; k++){
-                s->colunas[s->raizTamanho*i+j].validos[k] = 1;
-                s->linhas[s->raizTamanho*i+j].validos[k] = 1;
-                s->grids[i][j].validos[k] = 1;
+            for(int k = 1; k <= s->tamanho; k++){
+                s->colunas[s->raizTamanho*i+j].validos[k-1] = 1;
+                s->linhas[s->raizTamanho*i+j].validos[k-1] = 1;
+                s->grids[i][j].validos[k-1] = 1;
             }
         }
     }
@@ -201,7 +207,7 @@ void preencheHeap(Sudoku* s){
                 celula.coluna = j;
                 celula.num_possiveis = 0;
                 for(int k = 1; k <= s->tamanho; k++)
-                    if(s->linhas[i].validos[k] && s->colunas[j].validos[k] && s->grids[i/s->raizTamanho][j/s->raizTamanho].validos[k])
+                    if(s->linhas[i].validos[k-1] && s->colunas[j].validos[k-1] && s->grids[i/s->raizTamanho][j/s->raizTamanho].validos[k-1])
                         celula.num_possiveis++;
                 insere(s, celula);
             }
@@ -211,6 +217,41 @@ void preencheHeap(Sudoku* s){
 
 bool resolveSudoku(Sudoku* sudoku, FILE* fs){
     return backtracking(sudoku, 0, 0, fs);
+}
+
+bool heuristica(Sudoku* sudoku, FILE *fs){
+    if(sudoku == NULL)
+        return false;
+    if(sudoku->tamHeap == 0)
+        return true;
+    Celula celula = removeMin(sudoku);
+    int i = celula.linha;
+    int j = celula.coluna;
+    if(sudoku->matrizSudoku[i][j] != 0)
+        return false;
+    for(int k = 1; k <= sudoku->tamanho; k++){
+        if(sudoku->colunas[j].validos[k-1] == 0)
+            continue;
+        if(sudoku->linhas[i].validos[k-1] == 0)
+            continue;
+        if(sudoku->grids[i/sudoku->raizTamanho][j/sudoku->raizTamanho].validos[k-1] == 0)
+            continue;
+        
+        sudoku->matrizSudoku[i][j] = k;
+        //fprintf(fs, "tamanho heap=%d, indices e %d %d, valor %d, validez da linha %d\n", sudoku->tamHeap, i, j, k, sudoku->linhas[i].validos[k-1]);
+        //printaResultado(sudoku, fs);
+        validaValor(sudoku, i, j, k, 0);
+        bool retorno = heuristica(sudoku, fs);
+        if(retorno)
+            return true;
+        else{
+            validaValor(sudoku, i, j, k, 1);
+            continue;
+        }
+    }
+    sudoku->matrizSudoku[i][j] = 0;
+    insere(sudoku, celula);
+    return false;
 }
 
 void destroiValidos(Sudoku* s){
@@ -268,29 +309,4 @@ void destroiSudoku(Sudoku* s){
     s->heap = NULL;
     free(s);
     s = NULL;
-}
-
-bool heuristica(Sudoku* sudoku){
-    if(sudoku == NULL)
-        return false;
-    if(sudoku->tamHeap == 0)
-        return true;
-    Celula celula = removeMin(sudoku);
-    for(int k = 1; k <= sudoku->tamanho; k++){
-        if(sudoku->colunas[celula.linha].validos[k-1] == 0)
-            continue;
-        if(sudoku->linhas[celula.coluna].validos[k-1] == 0)
-            continue;
-        if(sudoku->grids[celula.linha/sudoku->raizTamanho][celula.coluna/sudoku->raizTamanho].validos[k-1] == 0)
-            continue;
-        
-        sudoku->matrizSudoku[celula.linha][celula.coluna] = k;
-        validaValor(sudoku, celula.linha, celula.coluna, k, 0);
-        bool retorno = heuristica(sudoku);
-        if(retorno)
-            return true;
-        else
-            continue;
-    }
-    return false;
 }

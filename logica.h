@@ -64,7 +64,7 @@ void destroiSudoku(Sudoku* s);
 
 void destroiMatriz(Sudoku* s);
 
-bool heuristica(Sudoku* sudoku);
+bool heuristica(Sudoku* sudoku, FILE *fs);
 
 void troca(Celula* a, Celula* b);
 
