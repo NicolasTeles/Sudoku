@@ -107,7 +107,7 @@ void criaSudoku(Sudoku* s){
         s->grids[i] = (Grid*)calloc(s->raizTamanho, sizeof(Grid));
     criaVetoresValidos(s);
     preencheValidos(s);
-    s->heap = (Celula*)calloc(s->tamanho*s->tamanho, sizeof(Celula));
+    s->heap = (Celula*)calloc(s->tamanho*s->tamanho, 12);
     s->tamHeap= 0;
 }
 
