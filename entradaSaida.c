@@ -15,15 +15,6 @@ void printaMatriz(int** matriz, int tamanho){
         }
 }
 
-/*void substituiBarraR(char* string){
-    int n = strlen(string);
-
-    for(int j = 0; j < n; j++){
-        if(string[j] == '\r')
-            string[j] = '\n';
-        }
-}*/
-
 void substituiQuebraDeLinha(char* string){
     int n = strlen(string);
 
@@ -105,8 +96,7 @@ Sudoku* geraSudoku(FILE* fp){
             destroiSudoku(sudoku);
             return NULL;
         }
-
-        //substituiBarraR(string);
+        
         substituiQuebraDeLinha(string);
         char* token = strtok(string, " ");
         int j;
