@@ -47,6 +47,7 @@ bool insere(Sudoku* sudoku, Celula elemento){
         troca(&sudoku->heap[pai(i)], &sudoku->heap[i]);
         i = pai(i);
     }
+    return true;
 }
 
 Celula removeMin(Sudoku* sudoku){
@@ -106,7 +107,7 @@ void criaSudoku(Sudoku* s){
         s->grids[i] = (Grid*)calloc(s->raizTamanho, sizeof(Grid));
     criaVetoresValidos(s);
     preencheValidos(s);
-    s->heap = (Celula*)calloc(s->tamanho*s->tamanho, sizeof(Celula*));
+    s->heap = (Celula*)calloc(s->tamanho*s->tamanho, sizeof(Celula));
     s->tamHeap= 0;
 }
 
@@ -179,10 +180,10 @@ void preencheHeap(Sudoku* s){
         printf("Sudoku nulo\n");
         exit(1);
     }
-    Celula celula; 
-    for(int i =0; i < s->tamanho; i++){
+    for(int i = 0; i < s->tamanho; i++){
         for(int j = 0; j < s->tamanho; j++){
             if(s->matrizSudoku[i][j] == 0){
+                Celula celula;
                 celula.linha = i;
                 celula.coluna = j;
                 celula.num_possiveis = 0;

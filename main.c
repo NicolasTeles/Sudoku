@@ -10,7 +10,7 @@
 int main(int argc, char* argv[]){
     char* entrada = NULL;
     char* saida = NULL;
-    char modo;
+    char modo = 'b';
     
     obterNomeArquivos(argc, argv, &entrada, &saida, &modo);
     FILE* fe = fopen(entrada, "r");
